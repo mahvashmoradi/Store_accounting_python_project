@@ -1,0 +1,12 @@
+id,name,price,brand,quantity
+0,book,50000,sam,11
+1,pen,50000,sam,24
+2,pencil,50000,sam,8
+3,pencil,150000,samsun,36
+4,pencil blue,50000,sam,9
+5,pencil red,150000,samsun,180
+6,milk,250000,pegah,31
+7,milk,50000,mihan,132
+8,sugar,36000,--,50
+9,mirror,540000,rf,50
+10,headphone,750000,sam,20
