@@ -16,7 +16,6 @@ class Product:
         self.brand = brand
         self.quantity = quantity
 
-
     def __str__(self):
         """
         print the name, price and brand of product

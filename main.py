@@ -45,7 +45,25 @@ if __name__ == '__main__':
                         if admin_menu == '1':
                             Admin.show_product()
                         elif admin_menu == '2':
-                            Admin.create_product()
+                            df = pd.read_csv("Product_info.csv")
+                            while True:
+                                prod = input('Please enter the id,name,price,brand,quantity of products;'
+                                             '\n enter e to exit: ').split(',')
+                                print(prod)
+                                if prod == ['e']:
+                                    break
+                                prod = [int(x.strip()) if x.isdigit() else x for x in prod]
+                                if len(prod) == 5:
+                                    if isinstance(prod[2], int) and isinstance(prod[4], int):
+                                        df = Admin.create_product(df, prod)
+                                    else:
+                                        print("Wrong input")
+                                        continue
+                                else:
+                                    print("Wrong input")
+                                    continue
+                            df.to_csv("Product_info.csv", mode='w', index=False, sep=",", header=True)
+                            print(df.loc[:, ["name", "price", "brand", "quantity"]])
                         elif admin_menu == '3':
                             admin.see_orders()
                         elif admin_menu == '4':
@@ -53,9 +71,9 @@ if __name__ == '__main__':
                             admin.active_account(a_name)
                             print(f"{a_name} account is active")
                         elif admin_menu == '5':
-                            flag = admin.change_password()
-                            if flag:
-                                print("Your password is changed")
+                            old_password = input("Please enter your old password")
+                            new_password = input("Please enter new password")
+                            print(admin.change_password(old_password, new_password))
                         elif admin_menu == '6':
                             break
                         else:
@@ -75,11 +93,12 @@ if __name__ == '__main__':
                         factor.to_csv('factor.csv', index=False)
                         while True:
                             # select menu
-                            print("What want do you do\n1-show and select product\n2-see your cards\n"
-                                  "3-change password\n4-log out")
+                            print("What want do you do\n1-show and select product\n2-see your cards\n3-print factor\n"
+                                  "4-change password\n5-log out")
                             menu_customer = input()
                             if menu_customer == '1':
-                                product = Customer.show_product()
+                                df_product = pd.read_csv("Product_info.csv")
+                                Customer.show_product(df_product)
                                 print("select your item. enter space then the number of product you"
                                       " need\ntype f to finish :")
                                 while True:
@@ -90,8 +109,8 @@ if __name__ == '__main__':
                                     if len(product_num) == 2:
                                         if product_num[0].isdigit() and product_num[1].isdigit():
                                             try:
-                                                name.add_cards(product, int(product_num[0]), int(product_num[1]))
-                                                print("The product is added to your cards")
+                                                print(name.add_cards(df_product, int(product_num[0]), int(product_num[1])))
+                                                # print()
                                             except:
                                                 print("There is not such product")
                                         else:
@@ -100,16 +119,20 @@ if __name__ == '__main__':
                                     else:
                                         print("Invalid input")
                                         continue
-                                s_factor = Customer.print_factor()
-                                Customer.save_to_data(name.name, s_factor)
-                                print("Thanks for your shopping")
                             elif menu_customer == '2':
                                 Customer.see_cards()
                             elif menu_customer == '3':
-                                flag = name.change_password()
-                                if flag:
-                                    print("Your password is changed")
+                                s_factor = Customer.print_factor()
+                                print(s_factor)
+                                Customer.save_to_data(name.name, s_factor)
+                                print("Thanks for your shopping")
+                                factor = pd.DataFrame({"name": [], "price": [], "num": [], "total": []})
+                                factor.to_csv('factor.csv', index=False)
                             elif menu_customer == '4':
+                                old_password = input("Please enter your old password")
+                                new_password = input("Please enter new password")
+                                print(name.change_password(old_password, new_password))
+                            elif menu_customer == '5':
                                 break
                             else:
                                 print("invalid input")

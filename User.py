@@ -4,19 +4,6 @@ import pandas as pd
 import hashlib
 
 
-def chek_pass(name):
-    """
-    This function gives the name of user and return the status of account and password to chek the login
-    :param name: name of user
-    :return: password and status of account
-    """
-    with open("user_info.csv", 'r', newline='') as reader:
-        csv_reader = csv.DictReader(reader)
-        sentence = [{"password": x['password'], "status_account": x["status_account"]} for x in csv_reader if
-                    x['username'] == name]
-        return sentence
-
-
 class User:
     """
     The class User which have 2 child class(Admin and Customer)
@@ -28,6 +15,19 @@ class User:
         :param name: name of user
         """
         self.name = name
+
+    @staticmethod
+    def chek_pass(name):
+        """
+        This function gives the name of user and return the status of account and password to chek the login
+        :param name: name of user
+        :return: password and status of account
+        """
+        with open("user_info.csv", 'r', newline='') as reader:
+            csv_reader = csv.DictReader(reader)
+            sentence = [{"password": x['password'], "status_account": x["status_account"]} for x in csv_reader if
+                        x['username'] == name]
+        return sentence
 
     @classmethod
     def create_account(cls, name, pwd):
@@ -63,24 +63,20 @@ class User:
         :return: True if every thing is ok and false if the password is wrong after 3 times.
         """
         count = 0
-        sentence = chek_pass(self.name)
+        sentence = User.chek_pass(self.name)
         try:
             # chek status of account
             assert int(sentence[0]["status_account"])
             while count < 3:
                 passwd = input("Please enter your password: ")
-                passwd = passwd.encode()
-                h = hashlib.sha1(passwd).hexdigest()
-                # print(h)
-
-                if sentence[0]["password"] == h:
+                if sentence[0]["password"] == hashlib.sha1(passwd.encode()).hexdigest():
                     return True
                 else:
                     count += 1
-                    print("Wrong Password in 3 times")
-            print("Your account is closed")
+                    print("Wrong Password")
             if self.name != 'admin':
                 User.close_account(self.name)
+                print("Your account is closed")
 
         except AssertionError:
             # if self.name == 'admin':
@@ -89,23 +85,21 @@ class User:
             print("Your account is closed\nplease report this problem to admin")
             return False
 
-    def change_password(self):
+    def change_password(self,old_password,new_password):
         """
         This function is changed the password of instance if the old password is OK.
         :return:True if the password is changed and false if is not.
         """
         df = pd.read_csv("user_info.csv")
-        old_password = input("Please enter your old password")
-        new_password = input("Please enter new password")
         old = hashlib.sha1(old_password.encode()).hexdigest()
         new = hashlib.sha1(new_password.encode()).hexdigest()
         if df.iloc[df.index[df['username'] == self.name].tolist()[0], 1] == old:
             df.loc[df["username"] == self.name] = df.loc[df["username"] == self.name].replace(old, new)
             df.to_csv("user_info.csv", index=False)
-            return True
+            return "Your password is changed"
         else:
-            print("wrong password")
-            return False
+            return "wrong password\nYour password is not changed"
+
 
 
 class Customer(User):
@@ -114,14 +108,12 @@ class Customer(User):
     """
 
     @staticmethod
-    def show_product():
+    def show_product(df):
         """
         This functions is for customer to see the products
         :return: pandas dataframe of products
         """
-        df = pd.read_csv("Product_info.csv")
         print(df.loc[:, ["name", "price", "brand"]])
-        return df
 
     @staticmethod
     def add_cards(df, prod, num):
@@ -130,14 +122,27 @@ class Customer(User):
         :param df: dataframe of products
         :param prod: the id of products
         :param num: the number of products which customer need
+        :return: the status of added product
         """
-        cal_price = df.loc[prod, 'price'] * num
-        df.loc[prod, 'quantity'] = df.loc[prod, 'quantity'] - num
-        lst = df.loc[prod, ["name", "price"]]
-        df2 = pd.DataFrame({"name": [lst[0]], "price": [lst[1]], "num": [num], "total": [cal_price]})
-        print(df2)
-        df2.to_csv('factor.csv', mode='a', index=False, sep=",", header=False)
-        df.to_csv("Product_info.csv", index=False)
+        try:
+            amount = df.loc[prod, 'quantity'] - num
+            if amount < 0:
+                raise Exception
+        except Exception:
+            remain = df.loc[prod, 'quantity']
+            if remain != 0:
+                return f"Sorry, There is not enough supply\nThere is just {remain}"
+            else:
+                return f"Sorry, This product is finished. It will be replaced as soon"
+        else:
+            cal_price = df.loc[prod, 'price'] * num
+            df.loc[prod, 'quantity'] = amount
+            lst = df.loc[prod, ["name", "price"]]
+            df2 = pd.DataFrame({"name": [lst[0]], "price": [lst[1]], "num": [num], "total": [cal_price]})
+            print(df2)
+            df2.to_csv('factor.csv', mode='a', index=False, sep=",", header=False)
+            df.to_csv("Product_info.csv", index=False)
+            return "The product is added to your cards"
 
     @staticmethod
     def print_factor():
@@ -150,7 +155,6 @@ class Customer(User):
             {"name": ["total"], "price": ["----"], "num": [sum(c_factor['num'])], "total": [sum(c_factor['total'])]})
         df2.to_csv('factor.csv', mode='a', index=False, sep=",", header=False)
         c_factor = pd.read_csv("factor.csv")
-        print(c_factor)
         return c_factor
 
     @staticmethod
@@ -168,12 +172,17 @@ class Customer(User):
         :param name: name of user that is shopping
         :param factor: factor of bought products
         """
-        data = {"name": [name], "action": [factor]}
-        # data= factor
-        data = pd.DataFrame(data)
-        data.to_csv("total_factors.csv", mode='a', index=False, sep=",")
-        # with open("total_factors.json", 'a') as f:
-        #     json.dump(data, f)
+        # data = {"customer_name": [name], "action": [factor]}
+        # print(factor)
+        # # data= factor
+        # data = pd.DataFrame(data)
+        # data.to_csv("total_factors.csv", mode='a', index=False, sep=",")
+        with open("total_factors.txt", 'a') as f:
+            f.write(f"customer_name: {name}\n")
+            f.writelines(f"{factor}")
+            f.write("\n")
+            f.write("----------------------------------------------------------\n")
+            # json.dump(data, f)
         # print(factor)
 
 
@@ -216,46 +225,38 @@ class Admin(User):
         print(df.loc[:, ["name", "price", "brand", "quantity"]])
 
     @staticmethod
-    def create_product():
+    def create_product(df, prod):
         """
         function for define  the product and save them to Product_info file.
+        :param df: Product Dataframe panda
+        :param prod: the information of product to add
+        :return: the dataframe of products with new product
         """
-        df = pd.read_csv("Product_info.csv")
-        while True:
-            prod = input('Please enter the id,name,price,brand,quantity of products;\n enter e to exit: ').split(',')
-            print(prod)
-            if prod == ['e']:
-                break
-
-            prod = [int(x.strip()) if x.isdigit() else x for x in prod]
-            if len(prod) == 5:
-                if isinstance(prod[2], int) and isinstance(prod[4], int):
-                    df2 = pd.Series(prod, index=["id", "name", "price", "brand", "quantity"])
-                else:
-                    print("Wrong input")
-                    continue
-            else:
-                print("Wrong input")
-                continue
-            lst_id = list(df["id"])
-            if prod[0] in lst_id:
-                print("This product is exist. The price and the quantity is updated")
-                id_row = df.index[df['id'] == prod[0]].tolist()[0]
+        df2 = pd.Series(prod, index=["id", "name", "price", "brand", "quantity"])
+        lst_id = list(df["id"])
+        if prod[0] in lst_id:
+            print("This product is exist.")
+            id_row = df.index[df['id'] == prod[0]].tolist()[0]
+            if df.loc[id_row, "name"] == prod[1]:
                 df.loc[id_row, "price"] = prod[2]
                 df.loc[id_row, "quantity"] += prod[4]
+                print("The price and the quantity is updated")
             else:
-                df = df.append(df2, ignore_index=True)
-        df.to_csv("Product_info.csv", mode='w', index=False, sep=",", header=True)
-        print(df.loc[:, ["name", "price", "brand", "quantity"]])
+                print("same id but different name\nPlease chek")
+        else:
+            df = df.append(df2, ignore_index=True)
+        return df
 
     @staticmethod
     def see_orders():
         """
         function to see the orders
         """
-        data = pd.read_csv("total_factors.csv")
-        print(data)
-        # with open("total_factors.csv", 'r') as f:
+        # data = pd.read_csv("total_factors.csv")
+        # print(data)
+
+        with open("total_factors.txt", 'r') as f:
+            print(f.read())
         #     k=csv.reader(f)
         #     [print(row) for row in k]
 
@@ -275,9 +276,9 @@ if __name__ == '__main__':
     # Customer.add_cards(1, 2)
     # factor = pd.DataFrame({"name": [], "price": [], "num": [], "total": []})
     # factor.to_csv("factor.csv", index=False)
-    # factor = pd.read_csv("factor.csv")
-    # Customer.save_to_data('mah', factor)
-    # Admin.see_orders()
-    # pwd = input("Hi Admin,\n please set your password: ")
-    admin = Admin('admin')
-    admin.create_product()
+    factor = pd.read_csv("factor.csv", sep=",")
+    Customer.save_to_data('mah', factor)
+    Admin.see_orders()
+# pwd = input("Hi Admin,\n please set your password: ")
+# admin = Admin('admin')
+# admin.create_product()
