@@ -1,5 +1,6 @@
 from User import Admin, Customer
 import pandas as pd
+import logging
 
 
 def welcome():
@@ -11,13 +12,43 @@ def welcome():
     print("------------------------------------------------------------------------------------------")
 
 
+def init_logging():
+    # Create a custom logger
+    admin_logger = logging.getLogger("admin")
+
+    # Create handlers
+    c_handler = logging.StreamHandler()
+    fg_handler = logging.FileHandler('log_file.log')
+
+    c_handler.setLevel(logging.WARNING)
+    fg_handler.setLevel(logging.WARNING)
+
+    # Create formatters and add it to handlers
+    c_format = logging.Formatter('%(name)s - %(asctime)s - %(message)s')
+    fg_format = logging.Formatter('%(asctime)s - %(message)s')
+
+    c_handler.setFormatter(c_format)
+    fg_handler.setFormatter(fg_format)
+
+    # Add handlers to the logger
+    admin_logger.addHandler(c_handler)
+    admin_logger.addHandler(fg_handler)
+
+    admin_logger.info('This is info test')
+    admin_logger.error('This is error test')
+    admin_logger.warning("This is warning test")
+    admin_logger.debug("This is debug test")
+    return admin_logger
+
+
 if __name__ == '__main__':
-    # init_logging()
+    admin_logger = init_logging()
     welcome()
     file_path_account = "user_info.csv"
+    file_path_product = "Product_info.csv"
     try:
         df_account = pd.read_csv(file_path_account)
-    except:
+    except FileNotFoundError:
         Admin.first_init()
     else:
         lst_username = list(df_account["username"])
@@ -36,81 +67,130 @@ if __name__ == '__main__':
                 # chek the input is admin or customer
                 print("Hi Admin")
                 admin = Admin("admin")
-                if admin.log_in():
+                df_account = pd.read_csv(file_path_account)
+                count = 0
+                while count < 3:
+                    passwd = input("Please enter your password: ")
+                    if admin.chek_pass(passwd, df_account):
+                        login = True
+                        break
+                    else:
+                        count += 1
+                        print("Wrong Password")
+                else:
+                    login = False
+                    print('You entered the password in 3 times. Please try later')
+                if login:
+                    admin_logger.warning("Admin is log in")
                     while True:
                         # select the task
-                        print("What want do you do\n1-see product\n2-create_product\n3-see_order\n4-active_account\n"
-                              "5-change password\n6-log out")
+                        print("What want do you do\n1-see all product\n2-see finished product\n3-create_product\n"
+                              "4-see_order\n5-active_account\n6-change password\n7-log out")
                         admin_menu = input()
+                        df_product = pd.read_csv(file_path_product)
                         if admin_menu == '1':
-                            Admin.show_product()
+                            Admin.show_product(df_product)
                         elif admin_menu == '2':
-                            df = pd.read_csv("Product_info.csv")
+                            Admin.show_finished_product(df_product)
+                        elif admin_menu == '3':
                             while True:
                                 prod = input('Please enter the id,name,price,brand,quantity of products;'
                                              '\n enter e to exit: ').split(',')
                                 print(prod)
                                 if prod == ['e']:
                                     break
-                                prod = [int(x.strip()) if x.isdigit() else x for x in prod]
+                                prod = [x.strip() for x in prod]
+                                prod = [int(x) if x.isdigit() else x for x in prod]
                                 if len(prod) == 5:
                                     if isinstance(prod[2], int) and isinstance(prod[4], int):
-                                        df = Admin.create_product(df, prod)
+                                        df_product = Admin.create_product(df_product, prod)
                                     else:
-                                        print("Wrong input")
+                                        print("The values are incorrect")
                                         continue
                                 else:
                                     print("Wrong input")
                                     continue
-                            df.to_csv("Product_info.csv", mode='w', index=False, sep=",", header=True)
-                            print(df.loc[:, ["name", "price", "brand", "quantity"]])
-                        elif admin_menu == '3':
-                            admin.see_orders()
+                            admin_logger.warning("The new products is defined")
+                            df_product.to_csv(file_path_product, mode='w', index=False, sep=",", header=True)
+                            print(df_product.loc[:, ["name", "price", "brand", "quantity"]])
                         elif admin_menu == '4':
-                            a_name = input("please enter the name of account you want to active: ")
-                            admin.active_account(a_name)
-                            print(f"{a_name} account is active")
+                            admin.see_orders()
                         elif admin_menu == '5':
-                            old_password = input("Please enter your old password")
-                            new_password = input("Please enter new password")
-                            print(admin.change_password(old_password, new_password))
+                            a_name = input("please enter the name of account you want to active: ")
+                            admin.active_account(df_account, a_name)
+                            print(f"{a_name} account is active")
+                            admin_logger.warning(f"customer {a_name} account is active")
                         elif admin_menu == '6':
+                            old_password = input("Please enter your old password: ")
+                            new_password = input("Please enter new password: ")
+                            ch_pass_status = admin.change_password(df_account, old_password, new_password)
+                            print(ch_pass_status)
+                            if ch_pass_status == "Your password is changed":
+                                admin_logger.warning("Admin password is changed")
+                        elif admin_menu == '7':
+                            admin_logger.warning("Admin is log out")
                             break
                         else:
                             print("Wrong Input")
                 else:
+                    admin_logger.error("The admin password is entered 3 times in wrong, Is it admin?")
                     continue
             else:
-                file_path_account = "user_info.csv"
                 df_account = pd.read_csv(file_path_account)
                 lst_username = list(df_account["username"])
                 if username in lst_username:
                     welcome()
                     name = Customer(username)
-                    if name.log_in():
+                    count = 0
+                    try:
+                        # chek status of account
+                        assert list(df_account.loc[df_account["username"] == name.name, "status_account"])[0]
+                        while count < 3:
+                            passwd = input("Please enter your password: ")
+                            if name.chek_pass(passwd, df_account):
+                                login = True
+                                break
+                            else:
+                                count += 1
+                                print("Wrong Password")
+                        else:
+                            login = False
+                            name.close_account(df_account, name.name)
+                            print("Your account is closed")
+                            admin_logger.warning(f"customer {name.name} account is closed")
+                    except AssertionError:
+                        print("Your account is closed\nplease report this problem to admin")
+                        login = False
+                    if login:
                         print(f"well come {username}")
-                        factor = pd.DataFrame({"name": [], "price": [], "num": [], "total": []})
-                        factor.to_csv('factor.csv', index=False)
+                        admin_logger.warning(f"customer {username} is log in")
+                        df_factor = pd.DataFrame({"name": [], "price": [], "num": [], "total": []})
                         while True:
                             # select menu
                             print("What want do you do\n1-show and select product\n2-see your cards\n3-print factor\n"
                                   "4-change password\n5-log out")
                             menu_customer = input()
+                            df_product = pd.read_csv(file_path_product)
                             if menu_customer == '1':
-                                df_product = pd.read_csv("Product_info.csv")
-                                Customer.show_product(df_product)
+                                print(Customer.show_product(df_product))
                                 print("select your item. enter space then the number of product you"
                                       " need\ntype f to finish :")
                                 while True:
                                     product_num = input().split(' ')
                                     if product_num == ['f']:
                                         break
-
                                     if len(product_num) == 2:
                                         if product_num[0].isdigit() and product_num[1].isdigit():
                                             try:
-                                                print(name.add_cards(df_product, int(product_num[0]), int(product_num[1])))
-                                                # print()
+                                                status_chek_quantity = name.chek_quantity(df_product,
+                                                                                          int(product_num[0]),
+                                                                                          int(product_num[1]))
+                                                print(status_chek_quantity[1])
+                                                if status_chek_quantity[0]:
+                                                    df_product, df_factor = name.add_cards(df_product, df_factor,
+                                                                                           int(product_num[0]),
+                                                                                           int(product_num[1]),
+                                                                                           admin_logger)
                                             except:
                                                 print("There is not such product")
                                         else:
@@ -120,30 +200,36 @@ if __name__ == '__main__':
                                         print("Invalid input")
                                         continue
                             elif menu_customer == '2':
-                                Customer.see_cards()
+                                print(Customer.see_cards(df_factor))
                             elif menu_customer == '3':
-                                s_factor = Customer.print_factor()
+                                s_factor = Customer.print_factor(df_factor)
                                 print(s_factor)
                                 Customer.save_to_data(name.name, s_factor)
+                                admin_logger.warning(f"The new factor by customer {name.name}")
                                 print("Thanks for your shopping")
-                                factor = pd.DataFrame({"name": [], "price": [], "num": [], "total": []})
-                                factor.to_csv('factor.csv', index=False)
+                                df_factor = pd.DataFrame({"name": [], "price": [], "num": [], "total": []})
+                                # factor.to_csv('factor.csv', index=False)
                             elif menu_customer == '4':
-                                old_password = input("Please enter your old password")
-                                new_password = input("Please enter new password")
-                                print(name.change_password(old_password, new_password))
+                                old_password = input("Please enter your old password: ")
+                                new_password = input("Please enter new password: ")
+                                ch_pass_status = name.change_password(df_account, old_password, new_password)
+                                print(ch_pass_status)
+                                if ch_pass_status == "Your password is changed":
+                                    admin_logger.warning(f"customer {name.name} password is changed")
                             elif menu_customer == '5':
+                                df_product.to_csv(file_path_product, index=False)
+                                admin_logger.warning(f"customer {username} is log out")
                                 break
                             else:
                                 print("invalid input")
                     else:
+                        admin_logger.warning(f"customer {username} is try to log in")
                         continue
                 else:
                     print("There is not your account, Please create account")
                     continue
         elif select == '2':
             name = input("Please set your username: ")
-            file_path_account = "user_info.csv"
             df_account = pd.read_csv(file_path_account)
             lst_username = list(df_account["username"])
             while True:
@@ -154,6 +240,7 @@ if __name__ == '__main__':
                     break
             pwd = input("please set your password: ")
             name = Customer.create_account(name, pwd)
+            admin_logger.warning(f"The new customer with name {name.name}")
             print("Your account is created. please log in")
         else:
             print("invalid input")

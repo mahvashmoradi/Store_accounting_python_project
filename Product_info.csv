@@ -1,15 +1,16 @@
 id,name,price,brand,quantity
-0,book,50000,sam,45
+0,book,50000,sam,58
 1,pen,50000,sam,48
-2,pencil,50000,sam,75
+2,pencil,50000,sam,146
 3,pencil,150000,samsun,0
-4,pencil blue,50000,sam,90
-5,pencil red,50000,samsun,254
-6,milk,250000,pegah,47
-7,milk,50000,mihan,117
-8,sugar,36000,--,44
+4,pencil blue,50000,sam,173
+5,pencil red,50000,samsun,250
+6,milk,250000,pegah,10
+7,milk,50000,mihan,109
+8,sugar,36000,--,88
 9,mirror,540000,rf,33
-10,headphone,750000,sam,15
+10,headphone,750000,sam,0
 11,paper,10000,a,50
-12,tomato,34000,--,64
-13,scarf,650000,sam,24
+12,tomato,34000,--,53
+13,scarf,650000,sam,20
+14,ball,25000,gha,0

@@ -1,0 +1,41 @@
+2021-05-11 10:38:46,718 - This is error test
+2021-05-11 10:38:46,719 - This is warning test
+2021-05-11 10:38:56,375 - customer zahra is log in
+2021-05-11 10:39:37,508 - The new factor by customer zahra
+2021-05-11 10:39:56,048 - customer zahra password is changed
+2021-05-11 10:40:06,876 - customer zahra password is changed
+2021-05-11 10:40:09,807 - customer zahra is log out
+2021-05-11 10:41:53,049 - The admin password is entered 3 times in wrong, Is it admin?
+2021-05-11 10:42:08,695 - customer mah account is closed
+2021-05-11 10:42:08,696 - customer mah is try to log in
+2021-05-11 10:46:14,418 - customer mah is try to log in
+2021-05-11 10:46:28,689 - Admin is log in
+2021-05-11 10:46:34,679 - customer mah account is active
+2021-05-11 10:46:37,028 - Admin is log out
+2021-05-11 10:46:56,665 - The new customer
+2021-05-11 10:48:25,178 - customer eli is log in
+2021-05-11 11:07:05,704 - This is error test
+2021-05-11 11:07:05,704 - This is warning test
+2021-05-11 11:07:13,947 - customer mah is log in
+2021-05-11 11:08:05,349 - The new factor by customer mah
+2021-05-11 11:08:11,697 - customer mah is log out
+2021-05-11 11:14:32,702 - This is error test
+2021-05-11 11:14:32,702 - This is warning test
+2021-05-11 11:14:42,895 - The new customer with name <User.Customer object at 0x0000000025443470>
+2021-05-11 11:15:18,569 - This is error test
+2021-05-11 11:15:18,569 - This is warning test
+2021-05-11 11:15:48,918 - The new customer with name pari
+2021-05-13 14:23:20,390 - This is error test
+2021-05-13 14:23:20,404 - This is warning test
+2021-05-13 14:23:53,543 - customer ali is log in
+2021-05-13 14:25:04,888 - The new factor by customer ali
+2021-05-13 14:25:20,401 - customer ali password is changed
+2021-05-13 14:25:46,806 - customer ali password is changed
+2021-05-13 14:25:51,285 - customer ali is log out
+2021-05-13 14:26:08,587 - Admin is log in
+2021-05-13 14:28:23,499 - The new products is defined
+2021-05-13 14:28:42,286 - Admin is log out
+2021-05-13 14:28:58,668 - The new customer with name sahar
+2021-05-13 14:29:14,281 - customer sahar is log in
+2021-05-13 14:29:35,190 - customer sahar password is changed
+2021-05-13 14:29:40,784 - customer sahar is log out
