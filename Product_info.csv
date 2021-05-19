@@ -1,6 +1,6 @@
 id,name,price,brand,quantity
-0,book,50000,sam,58
-1,pen,50000,sam,48
+0,book,50000,sam,48
+1,pen,50000,sam,42
 2,pencil,50000,sam,146
 3,pencil,150000,samsun,0
 4,pencil blue,50000,sam,173
@@ -8,7 +8,7 @@ id,name,price,brand,quantity
 6,milk,250000,pegah,10
 7,milk,50000,mihan,109
 8,sugar,36000,--,88
-9,mirror,540000,rf,33
+9,mirror,540000,rf,0
 10,headphone,750000,sam,0
 11,paper,10000,a,50
 12,tomato,34000,--,53

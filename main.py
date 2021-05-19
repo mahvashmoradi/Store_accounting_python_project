@@ -165,6 +165,7 @@ if __name__ == '__main__':
                         print(f"well come {username}")
                         admin_logger.warning(f"customer {username} is log in")
                         df_factor = pd.DataFrame({"name": [], "price": [], "num": [], "total": []})
+                        save = False
                         while True:
                             # select menu
                             print("What want do you do\n1-show and select product\n2-see your cards\n3-print factor\n"
@@ -178,6 +179,7 @@ if __name__ == '__main__':
                                 while True:
                                     product_num = input().split(' ')
                                     if product_num == ['f']:
+                                        df_product_save = df_product
                                         break
                                     if len(product_num) == 2:
                                         if product_num[0].isdigit() and product_num[1].isdigit():
@@ -209,6 +211,7 @@ if __name__ == '__main__':
                                 print("Thanks for your shopping")
                                 df_factor = pd.DataFrame({"name": [], "price": [], "num": [], "total": []})
                                 # factor.to_csv('factor.csv', index=False)
+                                save = True
                             elif menu_customer == '4':
                                 old_password = input("Please enter your old password: ")
                                 new_password = input("Please enter new password: ")
@@ -217,8 +220,12 @@ if __name__ == '__main__':
                                 if ch_pass_status == "Your password is changed":
                                     admin_logger.warning(f"customer {name.name} password is changed")
                             elif menu_customer == '5':
-                                df_product.to_csv(file_path_product, index=False)
                                 admin_logger.warning(f"customer {username} is log out")
+                                # print(df_product_save)
+                                if save:
+                                    # df_product.to_csv(file_path_product, index=False)
+                                    df_product_save.to_csv(file_path_product, mode='w', index=False, sep=",",
+                                                           header=True)
                                 break
                             else:
                                 print("invalid input")

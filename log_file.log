@@ -39,3 +39,76 @@
 2021-05-13 14:29:14,281 - customer sahar is log in
 2021-05-13 14:29:35,190 - customer sahar password is changed
 2021-05-13 14:29:40,784 - customer sahar is log out
+2021-05-19 15:04:48,990 - This is error test
+2021-05-19 15:04:49,002 - This is warning test
+2021-05-19 15:05:09,010 - customer ali is log in
+2021-05-19 15:05:57,992 - customer ali is log out
+2021-05-19 15:06:40,028 - customer mah is log in
+2021-05-19 15:07:03,799 - The new factor by customer mah
+2021-05-19 15:07:11,940 - customer mah is log out
+2021-05-19 15:10:18,170 - This is error test
+2021-05-19 15:10:18,170 - This is warning test
+2021-05-19 15:10:29,886 - customer ali is log in
+2021-05-19 15:10:47,175 - customer ali is log out
+2021-05-19 15:11:04,639 - customer ali is log in
+2021-05-19 15:11:20,376 - The new factor by customer ali
+2021-05-19 15:11:52,574 - customer ali is log out
+2021-05-19 15:16:49,772 - Admin is log in
+2021-05-19 15:17:36,379 - Admin is log out
+2021-05-19 15:17:51,916 - customer mah is log in
+2021-05-19 15:18:14,420 - The new factor by customer mah
+2021-05-19 15:22:51,514 - This is error test
+2021-05-19 15:22:51,514 - This is warning test
+2021-05-19 15:22:58,866 - customer mah is log in
+2021-05-19 15:23:19,379 - The new factor by customer mah
+2021-05-19 15:23:24,564 - customer mah is log out
+2021-05-19 15:24:07,489 - This is error test
+2021-05-19 15:24:07,490 - This is warning test
+2021-05-19 15:24:16,131 - customer ali is log in
+2021-05-19 15:24:27,264 - customer ali is log out
+2021-05-19 15:25:00,988 - customer eli is log in
+2021-05-19 15:25:11,630 - The new factor by customer eli
+2021-05-19 15:25:17,108 - customer eli is log out
+2021-05-19 15:27:46,399 - This is error test
+2021-05-19 15:27:46,399 - This is warning test
+2021-05-19 15:27:54,728 - customer majid is log in
+2021-05-19 15:31:35,399 - This is error test
+2021-05-19 15:31:35,399 - This is warning test
+2021-05-19 15:31:42,755 - customer mah is log in
+2021-05-19 15:33:14,773 - customer mah is log out
+2021-05-19 15:34:02,168 - Admin is log in
+2021-05-19 15:34:33,439 - This is error test
+2021-05-19 15:34:33,440 - This is warning test
+2021-05-19 15:34:49,404 - customer zahra is log in
+2021-05-19 15:35:06,658 - customer zahra is log out
+2021-05-19 15:37:28,411 - This is error test
+2021-05-19 15:37:28,412 - This is warning test
+2021-05-19 15:37:36,448 - customer eli is log in
+2021-05-19 15:37:53,831 - customer eli is log out
+2021-05-19 15:38:27,389 - Admin is log in
+2021-05-19 15:39:36,004 - This is error test
+2021-05-19 15:39:36,004 - This is warning test
+2021-05-19 15:39:45,934 - customer eli is log in
+2021-05-19 15:40:02,485 - The new factor by customer eli
+2021-05-19 15:40:09,296 - customer eli is log out
+2021-05-19 15:40:27,489 - Admin is log in
+2021-05-19 19:41:26,984 - This is error test
+2021-05-19 19:41:27,003 - This is warning test
+2021-05-19 19:50:28,706 - Admin is log in
+2021-05-19 19:50:33,823 - Admin is log out
+2021-05-19 19:50:53,979 - The admin password is entered 3 times in wrong, Is it admin?
+2021-05-19 19:51:25,774 - Admin is log in
+2021-05-19 19:51:49,103 - Admin is log out
+2021-05-19 19:52:22,388 - customer ali account is closed
+2021-05-19 19:52:22,389 - customer ali is try to log in
+2021-05-19 19:52:35,961 - customer ali is try to log in
+2021-05-19 19:53:13,657 - customer ali is try to log in
+2021-05-19 19:53:33,047 - Admin is log in
+2021-05-19 19:53:41,058 - customer ali account is active
+2021-05-19 19:53:50,337 - Admin is log out
+2021-05-19 19:53:57,590 - customer ali is log in
+2021-05-19 19:54:54,693 - mirror with id 9 is finished
+2021-05-19 19:55:58,729 - The new factor by customer ali
+2021-05-19 19:56:28,784 - customer ali is log out
+2021-05-19 19:56:35,556 - Admin is log in
+2021-05-19 19:57:52,121 - Admin password is changed
